@@ -1,6 +1,12 @@
 
 using Microsoft.EntityFrameworkCore;
+using Store.G04.Core;
+using Store.G04.Core.Mapping.Products;
+using Store.G04.Core.Services.Contract;
+using Store.G04.Ropository;
+using Store.G04.Ropository.Data;
 using Store.G04.Ropository.Data.Contexts;
+using Store.G04.Service.Services.Products;
 
 namespace Store.G04.APIs
 {
@@ -22,6 +28,9 @@ namespace Store.G04.APIs
                 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            builder.Services.AddScoped<IProductService,ProductService>();
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddAutoMapper(M => M.AddProfile(new ProductProfile()));
 
             var app = builder.Build();
 
@@ -35,6 +44,7 @@ namespace Store.G04.APIs
             try
             {
                 await context.Database.MigrateAsync();
+                await StoreDbContextSeed.SeedAsync(context);
             }
             catch (Exception ex) 
             {

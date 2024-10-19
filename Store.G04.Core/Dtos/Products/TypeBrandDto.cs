@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Store.G04.Core.Entities
+namespace Store.G04.Core.Dtos.Products
 {
-    public class ProductType : BaseEntiy<int>
+    public class TypeBrandDto
     {
         public string Name { get; set; }
+        public DateTime CreateAt { get; set; }
     }
 }
