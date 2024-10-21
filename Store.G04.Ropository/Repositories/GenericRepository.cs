@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Store.G04.Core.Entities;
 using Store.G04.Core.Repositories.Contract;
+using Store.G04.Core.Specifications;
 using Store.G04.Ropository.Data.Contexts;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace Store.G04.Ropository.Repositories
         {
             if (typeof(TEntity) == typeof(Product)) 
             {
-              return (IEnumerable<TEntity>) await _context.Products.Include(P=>P.Brand).Include(P=>P.Type).ToListAsync();
+              return (IEnumerable<TEntity>) await _context.Products.OrderBy(P =>P.Name).Include(P=>P.Brand).Include(P=>P.Type).ToListAsync();
             }
             return await _context.Set<TEntity>().ToListAsync();
         }
@@ -30,7 +31,8 @@ namespace Store.G04.Ropository.Repositories
         {
             if (typeof(TEntity) == typeof(Product))
             {
-                return await _context.Products.Include(P => P.Type).Include(P => P.Brand).FirstOrDefaultAsync(P => P.Id == id as int?) as TEntity;
+                //return await _context.Products.Include(P => P.Type).Include(P => P.Brand).FirstOrDefaultAsync(P => P.Id == id as int?) as TEntity;
+                return await _context.Products.Where(P => P.Id==id as int?).Include(P => P.Type).Include(P => P.Brand).FirstOrDefaultAsync() as TEntity;
             }
             return await _context.Set<TEntity>().FindAsync(id);
         }
@@ -45,6 +47,21 @@ namespace Store.G04.Ropository.Repositories
         public void Delete(TEntity entity)
         {
             _context.Remove(entity);
+        }
+
+        public async Task<IEnumerable<TEntity>> GetAllWithSpecAsync(ISpecifications<TEntity, Tkey> spec)
+        {
+            return await ApplySpecifications(spec).ToListAsync();
+        }
+
+        public async Task<TEntity> GetWithSpecAsync(ISpecifications<TEntity, Tkey> spec)
+        {
+            return await ApplySpecifications(spec).FirstOrDefaultAsync();
+        }
+
+        private IQueryable<TEntity> ApplySpecifications(ISpecifications<TEntity, Tkey> spec) 
+        {
+           return  SpecificationEvaluator<TEntity, Tkey>.GetQuery(_context.Set<TEntity>(), spec);
         }
     }
 }

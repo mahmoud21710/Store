@@ -10,7 +10,7 @@ namespace Store.G04.Core.Services.Contract
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductDto>> GetAllProductsAsync();
+        Task<IEnumerable<ProductDto>> GetAllProductsAsync(string? sort,int? brandId,int? typeId, int? pageSize , int? pageIndex );
         Task<IEnumerable<TypeBrandDto>> GetAllTypesAsync(); 
         Task<IEnumerable<TypeBrandDto>> GetAllBrandsAsync(); 
         Task<ProductDto> GetProductByIdAsync(int id);
