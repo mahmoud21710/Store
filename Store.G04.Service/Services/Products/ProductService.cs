@@ -2,6 +2,7 @@
 using Store.G04.Core;
 using Store.G04.Core.Dtos.Products;
 using Store.G04.Core.Entities;
+using Store.G04.Core.Helper;
 using Store.G04.Core.Services.Contract;
 using Store.G04.Core.Specifications;
 using Store.G04.Core.Specifications.Products;
@@ -23,11 +24,18 @@ namespace Store.G04.Service.Services.Products
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync(string? sort, int? brandId, int? typeId, int? pageSize, int? pageIndex)
+        public async Task<PaginationResponse<ProductDto>> GetAllProductsAsync(ProductSpecParams productSpecParams)
         {
-            var spec = new ProductSpecifications(sort,brandId,typeId,pageSize.Value,pageIndex.Value);
-           return _mapper.Map<IEnumerable<ProductDto>>
-            (await _unitOfWork.CreateRepository<Product, int>().GetAllWithSpecAsync(spec));
+            var spec = new ProductSpecifications(productSpecParams);
+
+            var products = await _unitOfWork.CreateRepository<Product, int>().GetAllWithSpecAsync(spec);
+            var mappedProduct = _mapper.Map<IEnumerable<ProductDto>>(products);
+
+            var countspeec = new ProductWithCountSpec(productSpecParams);
+
+            var count =await _unitOfWork.CreateRepository<Product, int>().GetCountAsync(countspeec);
+
+            return new PaginationResponse<ProductDto>(productSpecParams.PageSize, productSpecParams.PageIndex, count, mappedProduct) ;
         }
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {

@@ -18,11 +18,13 @@ namespace Store.G04.Core.Specifications.Products
         //900
         //P.Z=50
         //P.I=2
-        public ProductSpecifications(string? sort, int? brandId, int? typeId, int pageSize, int pageIndex):base(
+        public ProductSpecifications(ProductSpecParams productSpecParams) :base(
             P => 
-            (!brandId.HasValue || brandId == P.BrandId ) 
+            (string.IsNullOrEmpty(productSpecParams.Search) || P.Name.ToLower().Contains(productSpecParams.Search))
             &&
-            (!typeId.HasValue || typeId == P.TypeId )
+            (!productSpecParams.BrandId.HasValue || productSpecParams.BrandId == P.BrandId ) 
+            &&
+            (!productSpecParams.TypeId.HasValue || productSpecParams.TypeId == P.TypeId )
             )
         {
             //IncludeS.Add(P => P.Brand);
@@ -32,9 +34,9 @@ namespace Store.G04.Core.Specifications.Products
 
             //name ,priceAsc ,priceDesc
 
-            if (!string.IsNullOrEmpty(sort)) 
+            if (!string.IsNullOrEmpty(productSpecParams.Sort)) 
             {
-                switch (sort) 
+                switch (productSpecParams.Sort) 
                 {                                     
                     case "priceAsc":
                         AddOrderBy(p => p.Price);
@@ -55,7 +57,7 @@ namespace Store.G04.Core.Specifications.Products
             ApplyIncludes();
 
             
-            ApplyPagination((pageIndex-1)*pageSize,pageSize);
+            ApplyPagination((productSpecParams .PageIndex- 1)* productSpecParams.PageSize, productSpecParams.PageSize);
         }
         private void ApplyIncludes() 
         {
