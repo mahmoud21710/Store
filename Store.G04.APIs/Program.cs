@@ -1,5 +1,9 @@
 
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Store.G04.APIs.Error;
+using Store.G04.APIs.MiddeelWare;
 using Store.G04.Core;
 using Store.G04.Core.Mapping.Products;
 using Store.G04.Core.Services.Contract;
@@ -32,6 +36,24 @@ namespace Store.G04.APIs
             builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
             builder.Services.AddAutoMapper(M => M.AddProfile(new ProductProfile(builder.Configuration)));
 
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (actioncontext) =>
+                {
+                    var errors = actioncontext.ModelState.Where(P => P.Value.Errors.Count() > 0)
+                                            .SelectMany(P => P.Value.Errors)
+                                            .Select(E => E.ErrorMessage)
+                                            .ToArray();
+
+                    var response = new ApiValidationErrorResponse()
+                    {
+                        Erros = errors
+                    };
+                    return new BadRequestObjectResult(response);
+                };
+            });
+
             var app = builder.Build();
 
             
@@ -58,6 +80,8 @@ namespace Store.G04.APIs
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseMiddleware<ExceptionMiddleWare>();
 
             app.UseHttpsRedirection();
 
