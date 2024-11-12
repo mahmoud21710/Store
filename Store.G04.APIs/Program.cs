@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Store.G04.APIs.Error;
+using Store.G04.APIs.Helper;
 using Store.G04.APIs.MiddeelWare;
 using Store.G04.Core;
 using Store.G04.Core.Mapping.Products;
@@ -20,76 +21,11 @@ namespace Store.G04.APIs
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-           
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            builder.Services.AddDbContext<StoreDbContext>(option =>
-            {
-                option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-
-            builder.Services.AddScoped<IProductService,ProductService>();
-            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
-            builder.Services.AddAutoMapper(M => M.AddProfile(new ProductProfile(builder.Configuration)));
-
-
-            builder.Services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.InvalidModelStateResponseFactory = (actioncontext) =>
-                {
-                    var errors = actioncontext.ModelState.Where(P => P.Value.Errors.Count() > 0)
-                                            .SelectMany(P => P.Value.Errors)
-                                            .Select(E => E.ErrorMessage)
-                                            .ToArray();
-
-                    var response = new ApiValidationErrorResponse()
-                    {
-                        Erros = errors
-                    };
-                    return new BadRequestObjectResult(response);
-                };
-            });
+            builder.Services.AddDependancy(builder.Configuration);
 
             var app = builder.Build();
 
-            
-
-            using var scope = app.Services.CreateScope();
-            var services =scope.ServiceProvider;
-            var context = services.GetRequiredService<StoreDbContext>();
-            var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-
-            try
-            {
-                await context.Database.MigrateAsync();
-                await StoreDbContextSeed.SeedAsync(context);
-            }
-            catch (Exception ex) 
-            {
-                var logger =loggerFactory.CreateLogger<Program>();
-                logger.LogError(ex, "There Are Problem During Apply Migrations ");
-            }
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseMiddleware<ExceptionMiddleWare>();
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-            app.UseStaticFiles();
-
-            app.MapControllers();
+            await app.ConfigreMiddleWaresAsync();
 
             app.Run();
         }
