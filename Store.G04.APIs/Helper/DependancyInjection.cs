@@ -12,6 +12,12 @@ using StackExchange.Redis;
 using Store.G04.Core.Mapping.Basket;
 using Store.G04.Core.Repositories.Contract;
 using Store.G04.Ropository.Repositories;
+using Store.G04.Service.Caches;
+using Store.G04.Ropository.Identity.Contexts;
+using Store.G04.Core.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using Store.G04.Service.Tokens;
+using Store.G04.Service.User;
 
 namespace Store.G04.APIs.Helper
 {
@@ -26,6 +32,7 @@ namespace Store.G04.APIs.Helper
             services.AddAutoMapperServices(configuration);
             services.ConfigureInvalidModelStateResponseServices();
             services.AddRedisServices(configuration);
+            services.AddIdentityServices();
 
             return services;
         }
@@ -48,6 +55,10 @@ namespace Store.G04.APIs.Helper
             {
                 option.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
+            services.AddDbContext<StoreIdentityDbContext>(option =>
+            {
+                option.UseSqlServer(configuration.GetConnectionString("IdentityConnection"));
+            });
 
             return services;
         }
@@ -57,6 +68,10 @@ namespace Store.G04.APIs.Helper
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<IBasketService, BasketServices>();
+            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<ITokenService, TokenServic>();
+            services.AddScoped<IUserService, UserService>();
+           
 
             return services;
         }
@@ -96,6 +111,13 @@ namespace Store.G04.APIs.Helper
 
                 return ConnectionMultiplexer.Connect(connect);
             });
+
+            return services;
+        }
+        private static IServiceCollection AddIdentityServices(this IServiceCollection services)
+        {
+            services.AddIdentity<AppUser, IdentityRole>()
+                    .AddEntityFrameworkStores<StoreIdentityDbContext>();
 
             return services;
         }

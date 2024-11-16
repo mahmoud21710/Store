@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Store.G04.APIs.Attributes;
 using Store.G04.APIs.Error;
 using Store.G04.Core.Dtos.Products;
 using Store.G04.Core.Entities;
@@ -21,6 +22,8 @@ namespace Store.G04.APIs.Controllers
 
         [ProducesResponseType(typeof(PaginationResponse<ProductDto>),StatusCodes.Status200OK)]
         [HttpGet] //BaseUrl/api/Products
+        [Cached(100)]
+
         //[FromQuery] string? sort, [FromQuery] int? brandId,[FromQuery]int? typeId, [FromQuery] int? pageSize = 5,[FromQuery]int? pageIndex = 1
         public async Task<ActionResult<PaginationResponse<ProductDto>>> GetAllProduct([FromQuery] ProductSpecParams productSpecParams) 
         {

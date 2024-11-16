@@ -34,7 +34,9 @@ namespace Store.G04.APIs.MiddeelWare
                     new APiExceptionRsponse(StatusCodes.Status500InternalServerError, ex?.StackTrace.ToString(), ex?.Message)
                     : new APiExceptionRsponse(StatusCodes.Status500InternalServerError);
 
-                var res=  JsonSerializer.Serialize(response);
+                var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };   // be cause in redis convention is Pascalcase , and iam need camelcase
+
+                var res =  JsonSerializer.Serialize(response, options);
 
                 await context.Response.WriteAsync(res);
             }
