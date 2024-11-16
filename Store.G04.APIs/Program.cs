@@ -23,6 +23,8 @@ namespace Store.G04.APIs
 
             builder.Services.AddDependancy(builder.Configuration);
 
+            
+
             var app = builder.Build();
 
             await app.ConfigreMiddleWaresAsync();

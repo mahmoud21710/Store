@@ -40,7 +40,7 @@ namespace Store.G04.Service.Tokens
             var secKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt : Audience"],
+                audience: _configuration["Jwt:Audience"],
                 expires: DateTime.Now.AddDays(double.Parse(_configuration["Jwt:DurationInDays"])),
                 claims: claimUser,
                 signingCredentials: new SigningCredentials(secKey,SecurityAlgorithms.HmacSha256Signature)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Store.G04.APIs.Attributes;
 using Store.G04.APIs.Error;
@@ -20,10 +21,10 @@ namespace Store.G04.APIs.Controllers
             _productService = productService;
         }
 
+        [Authorize]
         [ProducesResponseType(typeof(PaginationResponse<ProductDto>),StatusCodes.Status200OK)]
         [HttpGet] //BaseUrl/api/Products
         [Cached(100)]
-
         //[FromQuery] string? sort, [FromQuery] int? brandId,[FromQuery]int? typeId, [FromQuery] int? pageSize = 5,[FromQuery]int? pageIndex = 1
         public async Task<ActionResult<PaginationResponse<ProductDto>>> GetAllProduct([FromQuery] ProductSpecParams productSpecParams) 
         {
@@ -31,6 +32,8 @@ namespace Store.G04.APIs.Controllers
 
             return Ok(result); //200
         }
+
+        [Authorize]
         [ProducesResponseType(typeof(IEnumerable<TypeBrandDto>), StatusCodes.Status200OK)]
         [HttpGet("brands")]
         public async Task<ActionResult<IEnumerable<TypeBrandDto>>> GetAllBrands()
@@ -40,13 +43,15 @@ namespace Store.G04.APIs.Controllers
         }
         [ProducesResponseType(typeof(IEnumerable<TypeBrandDto>), StatusCodes.Status200OK)]
         [HttpGet("types")]
+
+        [Authorize]
         public async Task<ActionResult<IEnumerable<TypeBrandDto>>> GetAllTypes()
         {
             var result = await _productService.GetAllTypesAsync();
             return Ok(result);
         }
 
-
+        [Authorize]
         [ProducesResponseType(typeof(TypeBrandDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]

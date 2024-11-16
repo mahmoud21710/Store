@@ -46,8 +46,10 @@ namespace Store.G04.APIs.Helper
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
 
+            app.UseAuthorization();
+            
             app.UseStaticFiles();
 
             app.MapControllers();

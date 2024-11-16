@@ -18,6 +18,10 @@ using Store.G04.Core.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Store.G04.Service.Tokens;
 using Store.G04.Service.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Store.G04.Core.Mapping.Auth;
 
 namespace Store.G04.APIs.Helper
 {
@@ -33,6 +37,7 @@ namespace Store.G04.APIs.Helper
             services.ConfigureInvalidModelStateResponseServices();
             services.AddRedisServices(configuration);
             services.AddIdentityServices();
+            services.AddAuthonticationServices(configuration);
 
             return services;
         }
@@ -79,6 +84,7 @@ namespace Store.G04.APIs.Helper
         {
             services.AddAutoMapper(M => M.AddProfile(new ProductProfile(configuration)));
             services.AddAutoMapper(M => M.AddProfile(new BasketProfiler()));
+            services.AddAutoMapper(M => M.AddProfile(new AuthProfile()));
             return services;
         }
         private static IServiceCollection ConfigureInvalidModelStateResponseServices(this IServiceCollection services   )
@@ -118,6 +124,46 @@ namespace Store.G04.APIs.Helper
         {
             services.AddIdentity<AppUser, IdentityRole>()
                     .AddEntityFrameworkStores<StoreIdentityDbContext>();
+
+            return services;
+        } 
+        private static IServiceCollection AddAuthonticationServices(this IServiceCollection services ,IConfiguration configuration)
+        {
+            services.AddAuthentication(
+                option => 
+                {
+                    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(
+                options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = configuration["Jwt:Issuer"],
+
+                        ValidateAudience = true,
+                        ValidAudience = configuration["Jwt:Audience"],
+
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                    };
+                    options.Events = new JwtBearerEvents() //Because i need know Reason   
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = context => 
+                        {
+                            Console.WriteLine("Token validated successfully");
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+
 
             return services;
         }
