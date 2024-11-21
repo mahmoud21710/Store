@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store.G04.APIs", "Store.G04.APIs\Store.G04.APIs.csproj", "{28076119-E245-4D2D-9898-3AF6A1F6DAF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.G04.APIs", "Store.G04.APIs\Store.G04.APIs.csproj", "{28076119-E245-4D2D-9898-3AF6A1F6DAF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store.G04.Core", "Store.G04.Core\Store.G04.Core.csproj", "{C82C795D-8372-4608-BCF5-AE8D76007263}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.G04.Core", "Store.G04.Core\Store.G04.Core.csproj", "{C82C795D-8372-4608-BCF5-AE8D76007263}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store.G04.Ropository", "Store.G04.Ropository\Store.G04.Ropository.csproj", "{D1A0A2D2-C077-4FF1-ABF2-3AF802A8EADA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.G04.Ropository", "Store.G04.Ropository\Store.G04.Ropository.csproj", "{D1A0A2D2-C077-4FF1-ABF2-3AF802A8EADA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store.G04.Service", "Store.G04.Service\Store.G04.Service.csproj", "{B58357A8-3183-4A8D-9177-EB73521AD8EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.G04.Service", "Store.G04.Service\Store.G04.Service.csproj", "{B58357A8-3183-4A8D-9177-EB73521AD8EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminDashBoard", "AdminDashBoard\AdminDashBoard.csproj", "{36A3CB90-41E8-4FE2-BA03-3ADDBCB8A35C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B58357A8-3183-4A8D-9177-EB73521AD8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B58357A8-3183-4A8D-9177-EB73521AD8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B58357A8-3183-4A8D-9177-EB73521AD8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36A3CB90-41E8-4FE2-BA03-3ADDBCB8A35C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36A3CB90-41E8-4FE2-BA03-3ADDBCB8A35C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36A3CB90-41E8-4FE2-BA03-3ADDBCB8A35C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36A3CB90-41E8-4FE2-BA03-3ADDBCB8A35C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
